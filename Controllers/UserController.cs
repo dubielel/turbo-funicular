@@ -21,10 +21,15 @@ public class UserController : Controller
         return View();
     }
 
+    public IActionResult Create()
+    {
+        return View();
+    }
+
     [HttpPost]
     public async Task<IActionResult> Create(User user)
     {
-        
+
         if (ModelState.IsValid)
         {   
             user.SetPassword(user.PasswordHash);
