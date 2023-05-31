@@ -20,4 +20,21 @@ public class UserController : Controller
     {
         return View();
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(User user)
+    {
+        
+        if (ModelState.IsValid)
+        {   
+            user.SetPassword(user.PasswordHash);
+            user.CreateDate = DateTime.Now;
+
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        return View(_dbContext);
+    }
 }

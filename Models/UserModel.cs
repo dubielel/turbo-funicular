@@ -19,22 +19,22 @@ namespace turbo_funicular.Models {
         public virtual ICollection<Message> Messages { get; set; }
 
          public void SetPassword(string password)
-    {
-        using (var sha256 = SHA256.Create())
         {
-            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            PasswordHash = Convert.ToBase64String(hashedBytes);
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                PasswordHash = Convert.ToBase64String(hashedBytes);
+            }
         }
-    }
 
-    public bool VerifyPassword(string password)
-    {
-        using (var sha256 = SHA256.Create())
+        public bool VerifyPassword(string password)
         {
-            var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
-            var hashedPassword = Convert.ToBase64String(hashedBytes);
-            return PasswordHash == hashedPassword;
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var hashedPassword = Convert.ToBase64String(hashedBytes);
+                return PasswordHash == hashedPassword;
+            }
         }
-    }
     }
 }

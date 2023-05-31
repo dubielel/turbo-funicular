@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -25,6 +27,17 @@ namespace turbo_funicular.Migrations
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
+            
+            using (var sha256 = SHA256.Create())
+            {
+                var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes("secret"));
+                var passwordHash = Convert.ToBase64String(hashedBytes);
+
+                migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Username", "PasswordHash", "CreateDate" },
+                values: new object[] { "admin", passwordHash, DateTime.Now });
+            }
 
             migrationBuilder.CreateTable(
                 name: "Events",
