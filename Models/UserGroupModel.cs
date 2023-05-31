@@ -1,8 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
-namespace turbo_funicular.Models {
-    public class UserGroup {
+namespace turbo_funicular.Models 
+{
+    public class UserGroup 
+    {
+        [Key]
+        public int Id { get; set; }
         [ForeignKeyAttribute("User")]
         public int UserId { get; set; }
         [ForeignKeyAttribute("Attribute")]

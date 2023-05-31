@@ -1,7 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using turbo_funicular.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(); 
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 
 var app = builder.Build();
 

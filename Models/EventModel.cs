@@ -14,6 +14,6 @@ namespace turbo_funicular.Models {
         public DateTime CreateDate { get; set; }
         public int MaxParticipants { get; set; }
 
-        public virtual ICollection<User> Participants { get; set; }
+        public virtual ICollection<UserEvent> UserEvents { get; set; }
     }
 }

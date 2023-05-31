@@ -1,0 +1,79 @@
+public class User
+    {
+        [Key]
+        public int Id { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime CreateDate { get; set; }
+
+        public virtual ICollection<Group> OwnedGroups { get; set; }
+        public virtual ICollection<Event> OwnedEvents { get; set; }
+        public virtual ICollection<UserGroup> UserGroups { get; set; }
+        public virtual ICollection<UserEvent> UserEvents { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
+    }
+public class Group {
+        [Key]
+        public int Id { get; set; }
+        [ForeignKeyAttribute("User")]
+        public int UserId { get; set; }
+        public User? User { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime CreateTime { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime UpdateTime { get; set; }
+        
+        public virtual ICollection<UserGroup> UserGroups { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
+    }
+public class Message {
+        [Key]
+        public int Id { get; set; }
+        [ForeignKeyAttribute("User")]
+        public int UserId { get; set; }
+        [ForeignKeyAttribute("Group")]
+        public int GroupId { get; set; }
+        public User? User { get; set; }
+        public Group? Group { get; set; }
+        public string Content { get; set; }
+        [DataType(DataType.DateTime)]
+        public DateTime CreateDate { get; set; }
+    }
+public class Event {
+        [Key]
+        public int Id { get; set; }
+        [ForeignKeyAttribute("User")]
+        public int UserId { get; set; }
+        public User? User { get; set; }
+        [DataType(DataType.DateTime)]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public DateTime CreateDate { get; set; }
+        public int MaxParticipants { get; set; }
+                
+        public virtual ICollection<UserEvent> UserEvents { get; set; }
+    }
+[Keyless]
+    public class UserEvent 
+    {
+        [ForeignKeyAttribute("User")]
+        public int UserId { get; set; }
+        [ForeignKeyAttribute("Event")]
+        public int EventId { get; set; }
+        public User? User { get; set; }
+        public Event? Event { get; set; }
+    }
+[Keyless]
+    public class UserGroup 
+    {
+        [ForeignKeyAttribute("User")]
+        public int UserId { get; set; }
+        [ForeignKeyAttribute("Attribute")]
+        public int GroupId { get; set; }
+        public User? User { get; set; }
+        public Group? Group { get; set; }
+        public bool IsModerator { get; set; }
+    }
