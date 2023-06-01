@@ -76,24 +76,31 @@ namespace turbo_funicular.Controllers
             var userId = (int)HttpContext.Session.GetInt32("userId");
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
             var createDate = DateTime.Now;
-                
-            if (true)
-            {
-                _dbContext.Events.Add(new Event()
-                    {
-                        UserId = userId,
-                        User = user,
-                        Name = @event.Name,
-                        Description = @event.Description,
-                        CreateDate = createDate,
-                        MaxParticipants = @event.MaxParticipants
-                });
 
-                await _dbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            if (!VerifyUniqueEventName(@event.Name))
+            {
+                ModelState.AddModelError(string.Empty, "Name already in use");
+                return View();
             }
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", userId);
-            return View(@event);
+
+            if (!VerifyPositiveMaxParticipants(@event.MaxParticipants))
+            {
+                ModelState.AddModelError(string.Empty, "Maximum Number of participants");
+                return View();
+            }
+
+            _dbContext.Events.Add(new Event()
+                {
+                    UserId = userId,
+                    User = user,
+                    Name = @event.Name,
+                    Description = @event.Description,
+                    CreateDate = createDate,
+                    MaxParticipants = @event.MaxParticipants
+            });
+
+            await _dbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Event/Edit/5
@@ -135,7 +142,19 @@ namespace turbo_funicular.Controllers
             }
 
             if (ModelState.IsValid)
-            {
+            {   
+                if (!VerifyUniqueEventName(@event.Name))
+                {
+                    ModelState.AddModelError(string.Empty, "Name already in use");
+                    return View();
+                }
+
+                if (!VerifyPositiveMaxParticipants(@event.MaxParticipants))
+                {
+                    ModelState.AddModelError(string.Empty, "Maximum Number of participants");
+                    return View();
+                }
+
                 try
                 {
                     _dbContext.Events.Update(@event);
@@ -209,8 +228,13 @@ namespace turbo_funicular.Controllers
 
         private bool VerifyUniqueEventName(string name) 
         {
-            var user = _dbContext.Events.FirstOrDefault(m => m.Name == name);
-            return user == null;
+            var @event = _dbContext.Events.FirstOrDefault(m => m.Name == name);
+            return @event == null;
+        }
+
+        private bool VerifyPositiveMaxParticipants(int maxParticipants)
+        {
+            return maxParticipants > 0;
         }
     }
 }
