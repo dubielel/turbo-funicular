@@ -112,6 +112,13 @@ namespace turbo_funicular.Controllers
             }
 
             var @group = await _dbContext.Groups.FindAsync(id);
+            var userId = (int) HttpContext.Session.GetInt32("userId");
+
+            if (@group.UserId != userId)
+            {
+                return RedirectToAction("PermissionDenied", "Home");
+            }
+
             if (@group == null)
             {
                 return NotFound();
@@ -184,9 +191,16 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
 
+            var userId = (int) HttpContext.Session.GetInt32("userId");
             var @group = await _dbContext.Groups
                 .Include(g => g.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (@group.UserId != userId)
+            {
+                return RedirectToAction("PermissionDenied", "Home");
+            }
+
             if (@group == null)
             {
                 return NotFound();
@@ -207,7 +221,17 @@ namespace turbo_funicular.Controllers
             {
                 return Problem("Entity set 'GroupContext.Group'  is null.");
             }
+
             var @group = await _dbContext.Groups.FindAsync(id);
+            var userId = (int) HttpContext.Session.GetInt32("userId");
+            if (@group.UserId != userId)
+            {
+                return RedirectToAction("PermissionDenied", "Home");
+            }
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+            user.OwnedGroups.Remove(@group);
+
             if (@group != null)
             {
                 _dbContext.Groups.Remove(@group);
