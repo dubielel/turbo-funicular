@@ -73,7 +73,7 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            @event.UserId = HttpContext.Session.GetInt32("userId");
+            @event.UserId = (int)HttpContext.Session.GetInt32("userId");
             @event.CreateDate = DateTime.Now;
 
             if (ModelState.IsValid)
