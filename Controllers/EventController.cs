@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,7 +97,8 @@ namespace turbo_funicular.Controllers
                     Name = @event.Name,
                     Description = @event.Description,
                     CreateDate = createDate,
-                    MaxParticipants = @event.MaxParticipants
+                    MaxParticipants = @event.MaxParticipants,
+                    UserEvents = new Collection<UserEvent>()
             };
 
             user.OwnedEvents.Add(newEvent);
@@ -121,6 +123,13 @@ namespace turbo_funicular.Controllers
             }
 
             var @event = await _dbContext.Events.FindAsync(id);
+            var userId = (int) HttpContext.Session.GetInt32("userId");
+
+            if (@event.UserId != userId)
+            {
+                return RedirectToAction("PermissionDenied", "Home");
+            }
+
             if (@event == null)
             {
                 return NotFound();
@@ -200,9 +209,16 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
 
+            var userId = (int) HttpContext.Session.GetInt32("userId");
             var @event = await _dbContext.Events
                 .Include(e => e.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (@event.UserId != userId)
+            {
+                return RedirectToAction("PermissionDenied", "Home");
+            }
+            
             if (@event == null)
             {
                 return NotFound();
@@ -223,7 +239,17 @@ namespace turbo_funicular.Controllers
             {
                 return Problem("Entity set 'EventContext.Event'  is null.");
             }
+
             var @event = await _dbContext.Events.FindAsync(id);
+            var userId = (int) HttpContext.Session.GetInt32("userId");
+            if (@event.UserId != userId)
+            {
+                return RedirectToAction("PermissionDenied", "Home");
+            }
+
+            var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+            user.OwnedEvents.Remove(@event);
+
             if (@event != null)
             {
                 _dbContext.Events.Remove(@event);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -80,7 +81,12 @@ namespace turbo_funicular.Controllers
             {
                 Username = user.Username,
                 PasswordHash = "",
-                CreateDate = createDate
+                CreateDate = createDate,
+                OwnedEvents = new Collection<Event>(),
+                OwnedGroups = new Collection<Group>(),
+                Messages = new Collection<Message>(),
+                UserEvents = new Collection<UserEvent>(),
+                UserGroups = new Collection<UserGroup>()     
             };
             newUser.SetPassword(user.Password);
 

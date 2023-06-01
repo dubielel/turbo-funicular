@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System.Text;
 using turbo_funicular.Models;
@@ -26,7 +27,12 @@ namespace turbo_funicular.Data
                             {
                                 Username = "admin",
                                 PasswordHash = passwordHash,
-                                CreateDate = DateTime.Now
+                                CreateDate = DateTime.Now,
+                                OwnedEvents = new Collection<Event>(),
+                                OwnedGroups = new Collection<Group>(),
+                                Messages = new Collection<Message>(),
+                                UserEvents = new Collection<UserEvent>(),
+                                UserGroups = new Collection<UserGroup>()                                
                             });
 
                     context.SaveChanges();

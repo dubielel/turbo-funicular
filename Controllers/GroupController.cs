@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Data.Common;
 using System;
 using System.Collections.Generic;
@@ -91,7 +92,9 @@ namespace turbo_funicular.Controllers
                     Name = @group.Name,
                     Description = @group.Description,
                     CreateTime = createTime,
-                    UpdateTime = createTime
+                    UpdateTime = createTime,
+                    Messages = new Collection<Message>(),
+                    UserGroups = new Collection<UserGroup>()
                 };
 
             user.OwnedGroups.Add(newGroup);
