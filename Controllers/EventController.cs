@@ -73,7 +73,6 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-
             var userId = (int)HttpContext.Session.GetInt32("userId");
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
             var createDate = DateTime.Now;
@@ -89,6 +88,7 @@ namespace turbo_funicular.Controllers
                         CreateDate = createDate,
                         MaxParticipants = @event.MaxParticipants
                 });
+
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
