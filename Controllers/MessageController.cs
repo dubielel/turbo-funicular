@@ -23,14 +23,20 @@ namespace turbo_funicular.Controllers
 
         // GET: Message
         public async Task<IActionResult> Index()
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             var messageContext = _dbContext.Messages.Include(m => m.Group).Include(m => m.User);
             return View(await messageContext.ToListAsync());
         }
 
         // GET: Message/Details/5
         public async Task<IActionResult> Details(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Messages == null)
             {
                 return NotFound();
@@ -50,7 +56,10 @@ namespace turbo_funicular.Controllers
 
         // GET: Message/Create
         public IActionResult Create()
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id");
             ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
             return View();
@@ -62,7 +71,10 @@ namespace turbo_funicular.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserId,GroupId,Content,CreateDate")] Message message)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (ModelState.IsValid)
             {
                 _dbContext.Messages.Add(message);
@@ -76,7 +88,10 @@ namespace turbo_funicular.Controllers
 
         // GET: Message/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Messages == null)
             {
                 return NotFound();
@@ -98,7 +113,10 @@ namespace turbo_funicular.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,GroupId,Content,CreateDate")] Message message)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id != message.Id)
             {
                 return NotFound();
@@ -131,7 +149,10 @@ namespace turbo_funicular.Controllers
 
         // GET: Message/Delete/5
         public async Task<IActionResult> Delete(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Messages == null)
             {
                 return NotFound();
@@ -153,7 +174,10 @@ namespace turbo_funicular.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (_dbContext.Messages == null)
             {
                 return Problem("Entity set 'MessageContext.Message'  is null.");

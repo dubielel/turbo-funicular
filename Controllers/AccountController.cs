@@ -41,6 +41,14 @@ public class AccountController : Controller
         }
     }
 
+    public IActionResult Logout() {
+        if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+                
+        HttpContext.Session.Remove("userId");
+        return RedirectToAction("Login", "Account");
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

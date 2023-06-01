@@ -59,7 +59,13 @@ namespace turbo_funicular.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Username,PasswordHash")] User user)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+            
+            if(Convert.ToInt32(HttpContext.Session.Get("userId")) != 1)
+                return RedirectToAction("PermissionDenied", "Home");
+
             if (ModelState.IsValid)
             {   
                 if (!VerifyUniqueUsername(user.Username))
@@ -80,7 +86,10 @@ namespace turbo_funicular.Controllers
 
         // GET: User/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {
+        {  
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Users == null)
             {
                 return NotFound();
@@ -100,7 +109,10 @@ namespace turbo_funicular.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Username,PasswordHash,CreateDate")] User user)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id != user.Id)
             {
                 return NotFound();
@@ -131,7 +143,10 @@ namespace turbo_funicular.Controllers
 
         // GET: User/Delete/5
         public async Task<IActionResult> Delete(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Users == null)
             {
                 return NotFound();
@@ -151,7 +166,10 @@ namespace turbo_funicular.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (_dbContext.Users == null)
             {
                 return Problem("Entity set 'UserContext.User'  is null.");

@@ -23,14 +23,20 @@ namespace turbo_funicular.Controllers
 
         // GET: Event
         public async Task<IActionResult> Index()
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             var eventContext = _dbContext.Events.Include(e => e.User);
             return View(await eventContext.ToListAsync());
         }
 
         // GET: Event/Details/5
         public async Task<IActionResult> Details(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Events == null)
             {
                 return NotFound();
@@ -49,7 +55,10 @@ namespace turbo_funicular.Controllers
 
         // GET: Event/Create
         public IActionResult Create()
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
             return View();
         }
@@ -60,7 +69,10 @@ namespace turbo_funicular.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserId,Name,Description,CreateDate,MaxParticipants")] Event @event)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (ModelState.IsValid)
             {
                 _dbContext.Events.Add(@event);
@@ -73,7 +85,13 @@ namespace turbo_funicular.Controllers
 
         // GET: Event/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Events == null)
             {
                 return NotFound();
@@ -94,7 +112,10 @@ namespace turbo_funicular.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Name,Description,CreateDate,MaxParticipants")] Event @event)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id != @event.Id)
             {
                 return NotFound();
@@ -126,7 +147,10 @@ namespace turbo_funicular.Controllers
 
         // GET: Event/Delete/5
         public async Task<IActionResult> Delete(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Events == null)
             {
                 return NotFound();
@@ -147,7 +171,10 @@ namespace turbo_funicular.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+                
             if (_dbContext.Events == null)
             {
                 return Problem("Entity set 'EventContext.Event'  is null.");

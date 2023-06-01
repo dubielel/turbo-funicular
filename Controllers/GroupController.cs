@@ -23,14 +23,20 @@ namespace turbo_funicular.Controllers
 
         // GET: Group
         public async Task<IActionResult> Index()
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             var groupContext = _dbContext.Groups.Include(g => g.User);
             return View(await groupContext.ToListAsync());
         }
 
         // GET: Group/Details/5
         public async Task<IActionResult> Details(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Groups == null)
             {
                 return NotFound();
@@ -49,7 +55,10 @@ namespace turbo_funicular.Controllers
 
         // GET: Group/Create
         public IActionResult Create()
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
             return View();
         }
@@ -60,7 +69,10 @@ namespace turbo_funicular.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,UserId,Name,Description,CreateTime,UpdateTime")] Group @group)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (ModelState.IsValid)
             {
                 _dbContext.Groups.Add(@group);
@@ -73,7 +85,10 @@ namespace turbo_funicular.Controllers
 
         // GET: Group/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Groups == null)
             {
                 return NotFound();
@@ -94,7 +109,10 @@ namespace turbo_funicular.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Name,Description,CreateTime,UpdateTime")] Group @group)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id != @group.Id)
             {
                 return NotFound();
@@ -126,7 +144,10 @@ namespace turbo_funicular.Controllers
 
         // GET: Group/Delete/5
         public async Task<IActionResult> Delete(int? id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Groups == null)
             {
                 return NotFound();
@@ -147,7 +168,10 @@ namespace turbo_funicular.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
+        {   
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (_dbContext.Groups == null)
             {
                 return Problem("Entity set 'GroupContext.Group'  is null.");
@@ -163,7 +187,7 @@ namespace turbo_funicular.Controllers
         }
 
         private bool GroupExists(int id)
-        {
+        {   
           return (_dbContext.Groups?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }

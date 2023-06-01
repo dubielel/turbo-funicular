@@ -18,13 +18,15 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        if(!HttpContext.Session.Keys.Contains("username"))
-            return RedirectToAction("Login", "Account");
-        
         return View();
     }
 
     public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    public IActionResult PermissionDenied()
     {
         return View();
     }
