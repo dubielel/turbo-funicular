@@ -73,7 +73,7 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            @event.UserId = Convert.ToInt32(HttpContext.Session.Get("userId"));
+            @event.UserId = HttpContext.Session.GetInt32("userId");
             @event.CreateDate = DateTime.Now;
 
             if (ModelState.IsValid)
@@ -195,6 +195,12 @@ namespace turbo_funicular.Controllers
         private bool EventExists(int id)
         {
           return (_dbContext.Events?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private bool VerifyUniqueEventName(string name) 
+        {
+            var user = _dbContext.Events.FirstOrDefault(m => m.Name == name);
+            return user == null;
         }
     }
 }
