@@ -11,7 +11,7 @@ using turbo_funicular.Data;
 namespace turbo_funicular.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230531224647_InitialCreate")]
+    [Migration("20230601150349_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
