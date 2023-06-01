@@ -89,7 +89,7 @@ namespace turbo_funicular.Controllers
                 return View();
             }
 
-            _dbContext.Events.Add(new Event()
+            var newEvent = new Event()
                 {
                     UserId = userId,
                     User = user,
@@ -97,7 +97,10 @@ namespace turbo_funicular.Controllers
                     Description = @event.Description,
                     CreateDate = createDate,
                     MaxParticipants = @event.MaxParticipants
-            });
+            };
+
+            user.OwnedEvents.Add(newEvent);
+            _dbContext.Events.Add(newEvent);
 
             await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

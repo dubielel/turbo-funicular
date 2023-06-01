@@ -1,3 +1,4 @@
+using System.Data.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -77,22 +78,26 @@ namespace turbo_funicular.Controllers
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
             var createTime = DateTime.Now;
 
-            if (true)
+            if (!VerifyUniqueGroupName(group.Name))
             {
-                _dbContext.Groups.Add(new Group() 
-                    {
-                        UserId = userId,
-                        User = user,
-                        Name = @group.Name,
-                        Description = @group.Description,
-                        CreateTime = createTime,
-                        UpdateTime = createTime
-                });
-                await _dbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError(string.Empty, "Name already in use");
+                return View();
             }
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", userId);
-            return View(@group);
+
+            var newGroup = new Group() 
+                {
+                    UserId = userId,
+                    User = user,
+                    Name = @group.Name,
+                    Description = @group.Description,
+                    CreateTime = createTime,
+                    UpdateTime = createTime
+                };
+
+            user.OwnedGroups.Add(newGroup);
+            _dbContext.Groups.Add(newGroup);
+            await _dbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Group/Edit/5
@@ -120,44 +125,52 @@ namespace turbo_funicular.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Name,Description,CreateTime,UpdateTime")] Group @group)
+        public async Task<IActionResult> Edit(int id, GroupViewModel @group)
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            if (id != @group.Id)
+            if (!VerifyUniqueGroupName(@group.Name))
+            {
+                ModelState.AddModelError(string.Empty, "Name already in use");
+                return View();
+            }
+
+            var updatedGroup = await _dbContext.Groups.FirstOrDefaultAsync(e => e.Id == id);
+
+            if (updatedGroup == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                if (!VerifyUniqueGroupName(@group.Name))
-                {
-                    ModelState.AddModelError(string.Empty, "Name already in use");
-                    return View();
-                }
+            var userId = (int) HttpContext.Session.GetInt32("userId");
 
-                try
-                {
-                    _dbContext.Groups.Update(@group);
-                    await _dbContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GroupExists(@group.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+            if (updatedGroup.UserId != userId)
+            {
+                ModelState.AddModelError(string.Empty, "Only event creator can edit event");
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @group.UserId);
-            return View(@group);
+
+            updatedGroup.Name = @group.Name;
+            updatedGroup.Description = @group.Description;
+
+            try
+            {
+                _dbContext.Groups.Update(updatedGroup);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!GroupExists(updatedGroup.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Group/Delete/5
