@@ -74,7 +74,13 @@ namespace turbo_funicular.Controllers
                 return RedirectToAction("Login", "Account");
 
             if (ModelState.IsValid)
-            {
+            {   
+                if (!VerifyUniqueGroupName(@group.Name))
+                {
+                    ModelState.AddModelError(string.Empty, "Name already in use");
+                    return View();
+                }
+                
                 _dbContext.Groups.Add(@group);
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -120,6 +126,12 @@ namespace turbo_funicular.Controllers
 
             if (ModelState.IsValid)
             {
+                if (!VerifyUniqueGroupName(@group.Name))
+                {
+                    ModelState.AddModelError(string.Empty, "Name already in use");
+                    return View();
+                }
+
                 try
                 {
                     _dbContext.Groups.Update(@group);
@@ -189,6 +201,12 @@ namespace turbo_funicular.Controllers
         private bool GroupExists(int id)
         {   
           return (_dbContext.Groups?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private bool VerifyUniqueGroupName(string name) 
+        {
+            var user = _dbContext.Groups.FirstOrDefault(m => m.Name == name);
+            return user == null;
         }
     }
 }
