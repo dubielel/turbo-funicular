@@ -67,22 +67,32 @@ namespace turbo_funicular.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Name,Description,CreateDate,MaxParticipants")] Event @event)
+        //[ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(EventViewModel @event)
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            @event.UserId = (int)HttpContext.Session.GetInt32("userId");
-            @event.CreateDate = DateTime.Now;
 
-            if (ModelState.IsValid)
+            var userId = (int)HttpContext.Session.GetInt32("userId");
+            var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+            var createDate = DateTime.Now;
+
+            if (true)
             {
-                _dbContext.Events.Add(@event);
+                _dbContext.Events.Add(new Event()
+                    {
+                        UserId = userId,
+                        User = user,
+                        Name = @event.Name,
+                        Description = @event.Description,
+                        CreateDate = createDate,
+                        MaxParticipants = @event.MaxParticipants
+                });
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @event.UserId);
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", userId);
             return View(@event);
         }
 
