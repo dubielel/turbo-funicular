@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using turbo_funicular.Data;
+using Microsoft.Extensions.DependencyInjection;
+using Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

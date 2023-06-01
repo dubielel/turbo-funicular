@@ -10,87 +10,90 @@ using turbo_funicular.Models;
 
 namespace turbo_funicular.Controllers
 {
-    public class UserController : Controller
+    public class EventController : Controller
     {
-        private readonly UserContext _context;
+        private readonly EventContext _context;
 
-        public UserController(UserContext context)
+        public EventController(EventContext context)
         {
             _context = context;
         }
 
-        // GET: User
+        // GET: Event
         public async Task<IActionResult> Index()
         {
-              return _context.User != null ? 
-                          View(await _context.User.ToListAsync()) :
-                          Problem("Entity set 'UserContext.User'  is null.");
+            var eventContext = _context.Event.Include(e => e.User);
+            return View(await eventContext.ToListAsync());
         }
 
-        // GET: User/Details/5
+        // GET: Event/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Event == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User
+            var @event = await _context.Event
+                .Include(e => e.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (@event == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(@event);
         }
 
-        // GET: User/Create
+        // GET: Event/Create
         public IActionResult Create()
         {
+            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id");
             return View();
         }
 
-        // POST: User/Create
+        // POST: Event/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,PasswordHash,CreateDate")] User user)
+        public async Task<IActionResult> Create([Bind("Id,UserId,Name,Description,CreateDate,MaxParticipants")] Event @event)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
+                _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @event.UserId);
+            return View(@event);
         }
 
-        // GET: User/Edit/5
+        // GET: Event/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Event == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
+            var @event = await _context.Event.FindAsync(id);
+            if (@event == null)
             {
                 return NotFound();
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @event.UserId);
+            return View(@event);
         }
 
-        // POST: User/Edit/5
+        // POST: Event/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,PasswordHash,CreateDate")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Name,Description,CreateDate,MaxParticipants")] Event @event)
         {
-            if (id != user.Id)
+            if (id != @event.Id)
             {
                 return NotFound();
             }
@@ -99,12 +102,12 @@ namespace turbo_funicular.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(@event);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
+                    if (!EventExists(@event.Id))
                     {
                         return NotFound();
                     }
@@ -115,49 +118,51 @@ namespace turbo_funicular.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @event.UserId);
+            return View(@event);
         }
 
-        // GET: User/Delete/5
+        // GET: Event/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Event == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User
+            var @event = await _context.Event
+                .Include(e => e.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (@event == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(@event);
         }
 
-        // POST: User/Delete/5
+        // POST: Event/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.User == null)
+            if (_context.Event == null)
             {
-                return Problem("Entity set 'UserContext.User'  is null.");
+                return Problem("Entity set 'EventContext.Event'  is null.");
             }
-            var user = await _context.User.FindAsync(id);
-            if (user != null)
+            var @event = await _context.Event.FindAsync(id);
+            if (@event != null)
             {
-                _context.User.Remove(user);
+                _context.Event.Remove(@event);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool EventExists(int id)
         {
-          return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Event?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

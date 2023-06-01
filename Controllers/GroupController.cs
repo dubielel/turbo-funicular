@@ -10,87 +10,90 @@ using turbo_funicular.Models;
 
 namespace turbo_funicular.Controllers
 {
-    public class UserController : Controller
+    public class GroupController : Controller
     {
-        private readonly UserContext _context;
+        private readonly GroupContext _context;
 
-        public UserController(UserContext context)
+        public GroupController(GroupContext context)
         {
             _context = context;
         }
 
-        // GET: User
+        // GET: Group
         public async Task<IActionResult> Index()
         {
-              return _context.User != null ? 
-                          View(await _context.User.ToListAsync()) :
-                          Problem("Entity set 'UserContext.User'  is null.");
+            var groupContext = _context.Group.Include(g => g.User);
+            return View(await groupContext.ToListAsync());
         }
 
-        // GET: User/Details/5
+        // GET: Group/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Group == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User
+            var @group = await _context.Group
+                .Include(g => g.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (@group == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(@group);
         }
 
-        // GET: User/Create
+        // GET: Group/Create
         public IActionResult Create()
         {
+            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id");
             return View();
         }
 
-        // POST: User/Create
+        // POST: Group/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,PasswordHash,CreateDate")] User user)
+        public async Task<IActionResult> Create([Bind("Id,UserId,Name,Description,CreateTime,UpdateTime")] Group @group)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
+                _context.Add(@group);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @group.UserId);
+            return View(@group);
         }
 
-        // GET: User/Edit/5
+        // GET: Group/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Group == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
+            var @group = await _context.Group.FindAsync(id);
+            if (@group == null)
             {
                 return NotFound();
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @group.UserId);
+            return View(@group);
         }
 
-        // POST: User/Edit/5
+        // POST: Group/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Username,PasswordHash,CreateDate")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Name,Description,CreateTime,UpdateTime")] Group @group)
         {
-            if (id != user.Id)
+            if (id != @group.Id)
             {
                 return NotFound();
             }
@@ -99,12 +102,12 @@ namespace turbo_funicular.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(@group);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
+                    if (!GroupExists(@group.Id))
                     {
                         return NotFound();
                     }
@@ -115,49 +118,51 @@ namespace turbo_funicular.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(user);
+            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @group.UserId);
+            return View(@group);
         }
 
-        // GET: User/Delete/5
+        // GET: Group/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _context.Group == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User
+            var @group = await _context.Group
+                .Include(g => g.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (@group == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(@group);
         }
 
-        // POST: User/Delete/5
+        // POST: Group/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.User == null)
+            if (_context.Group == null)
             {
-                return Problem("Entity set 'UserContext.User'  is null.");
+                return Problem("Entity set 'GroupContext.Group'  is null.");
             }
-            var user = await _context.User.FindAsync(id);
-            if (user != null)
+            var @group = await _context.Group.FindAsync(id);
+            if (@group != null)
             {
-                _context.User.Remove(user);
+                _context.Group.Remove(@group);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool GroupExists(int id)
         {
-          return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Group?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
