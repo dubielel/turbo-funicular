@@ -73,7 +73,7 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            var userId = (int)HttpContext.Session.GetInt32("userId");
+            var userId = (int) HttpContext.Session.GetInt32("userId");
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
             var createDate = DateTime.Now;
 
@@ -112,7 +112,7 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            if (id == null || _dbContext.Events == null)
+            if (id == null || await _dbContext.Events.FirstOrDefaultAsync(e => e.Id == id) == null)
             {
                 return NotFound();
             }
@@ -131,50 +131,59 @@ namespace turbo_funicular.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,Name,Description,CreateDate,MaxParticipants")] Event @event)
+        public async Task<IActionResult> Edit(int id, EventViewModel @event)
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            if (id != @event.Id)
+            var updatedEvent = await _dbContext.Events.FirstOrDefaultAsync(e => e.Id == id);
+
+            if (updatedEvent == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {   
-                if (!VerifyUniqueEventName(@event.Name))
-                {
-                    ModelState.AddModelError(string.Empty, "Name already in use");
-                    return View();
-                }
+            if (!VerifyUniqueEventName(@event.Name))
+            {
+                ModelState.AddModelError(string.Empty, "Name already in use");
+                return View();
+            }
 
-                if (!VerifyPositiveMaxParticipants(@event.MaxParticipants))
-                {
-                    ModelState.AddModelError(string.Empty, "Maximum Number of participants");
-                    return View();
-                }
+            if (!VerifyPositiveMaxParticipants(@event.MaxParticipants))
+            {
+                ModelState.AddModelError(string.Empty, "Maximum Number of participants");
+                return View();
+            }
 
-                try
-                {
-                    _dbContext.Events.Update(@event);
-                    await _dbContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EventExists(@event.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+            var userId = (int) HttpContext.Session.GetInt32("userId");
+
+            if (updatedEvent.UserId != userId)
+            {
+                ModelState.AddModelError(string.Empty, "Only event creator can edit event");
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @event.UserId);
-            return View(@event);
+
+            updatedEvent.Name = @event.Name;
+            updatedEvent.Description = @event.Description;
+            updatedEvent.MaxParticipants = @event.MaxParticipants;
+
+            try
+            {
+                _dbContext.Events.Update(updatedEvent);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!EventExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Event/Delete/5
