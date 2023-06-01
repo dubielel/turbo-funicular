@@ -8,9 +8,9 @@ namespace turbo_funicular.Models {
         [ForeignKeyAttribute("User")]
         public int UserId { get; set; }
         public User? User { get; set; }
-        [DataType(DataType.DateTime)]
         public string Name { get; set; }
         public string Description { get; set; }
+        [DataType(DataType.DateTime)]
         public DateTime CreateDate { get; set; }
         public int MaxParticipants { get; set; }
 
