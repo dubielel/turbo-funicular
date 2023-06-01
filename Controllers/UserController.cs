@@ -58,10 +58,19 @@ namespace turbo_funicular.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,PasswordHash,CreateDate")] User user)
+        public async Task<IActionResult> Create([Bind("Id,Username,PasswordHash")] User user)
         {
             if (ModelState.IsValid)
-            {
+            {   
+                if (!VerifyUniqueUsername(user.Username))
+                {
+                    ModelState.AddModelError(string.Empty, "Username already in use");
+                    return View();
+                }
+
+                user.SetPassword(user.PasswordHash);
+                user.CreateDate = DateTime.Now;
+
                 _dbContext.Users.Add(user);
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -160,6 +169,12 @@ namespace turbo_funicular.Controllers
         private bool UserExists(int id)
         {
           return (_dbContext.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private bool VerifyUniqueUsername(string username) 
+        {
+            var user = _dbContext.Users.FirstOrDefault(m => m.Username == username);
+            return user == null;
         }
     }
 }
