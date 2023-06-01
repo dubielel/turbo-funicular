@@ -1,8 +1,16 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace turbo_funicular.Models {
     public class Group {
+
+        public Group()
+        {
+            Messages = new Collection<Message>();
+            UserGroups = new Collection<UserGroup>();
+        }
+
         [Key]
         public int Id { get; set; }
         [ForeignKeyAttribute("User")]

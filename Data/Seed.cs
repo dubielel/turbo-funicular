@@ -27,12 +27,7 @@ namespace turbo_funicular.Data
                             {
                                 Username = "admin",
                                 PasswordHash = passwordHash,
-                                CreateDate = DateTime.Now,
-                                OwnedEvents = new Collection<Event>(),
-                                OwnedGroups = new Collection<Group>(),
-                                Messages = new Collection<Message>(),
-                                UserEvents = new Collection<UserEvent>(),
-                                UserGroups = new Collection<UserGroup>()                                
+                                CreateDate = DateTime.Now                          
                             });
 
                     context.SaveChanges();

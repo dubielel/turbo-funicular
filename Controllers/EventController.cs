@@ -86,7 +86,7 @@ namespace turbo_funicular.Controllers
 
             if (!VerifyPositiveMaxParticipants(@event.MaxParticipants))
             {
-                ModelState.AddModelError(string.Empty, "Maximum Number of participants");
+                ModelState.AddModelError(string.Empty, "Maximum Number of participants should be greater than 0");
                 return View();
             }
 
@@ -97,8 +97,7 @@ namespace turbo_funicular.Controllers
                     Name = @event.Name,
                     Description = @event.Description,
                     CreateDate = createDate,
-                    MaxParticipants = @event.MaxParticipants,
-                    UserEvents = new Collection<UserEvent>()
+                    MaxParticipants = @event.MaxParticipants
             };
 
             user.OwnedEvents.Add(newEvent);
@@ -218,7 +217,7 @@ namespace turbo_funicular.Controllers
             {
                 return RedirectToAction("PermissionDenied", "Home");
             }
-            
+
             if (@event == null)
             {
                 return NotFound();

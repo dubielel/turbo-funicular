@@ -4,7 +4,16 @@ using System.Text;
 
 namespace turbo_funicular.Models {
     public class User
-    {
+    {   
+        public User()
+        {
+            OwnedGroups = new List<Group>();
+            OwnedEvents = new List<Event>();
+            UserGroups = new List<UserGroup>();
+            UserEvents = new List<UserEvent>();
+            Messages = new List<Message>();
+        }
+        
         [Key]
         public int Id { get; set; }
         public string Username { get; set; }

@@ -1,8 +1,14 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace turbo_funicular.Models {
     public class Event {
+        public Event()
+        {
+            UserEvents = new Collection<UserEvent>();
+        }
+
         [Key]
         public int Id { get; set; }
         [ForeignKeyAttribute("User")]

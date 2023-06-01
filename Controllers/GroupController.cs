@@ -92,9 +92,7 @@ namespace turbo_funicular.Controllers
                     Name = @group.Name,
                     Description = @group.Description,
                     CreateTime = createTime,
-                    UpdateTime = createTime,
-                    Messages = new Collection<Message>(),
-                    UserGroups = new Collection<UserGroup>()
+                    UpdateTime = createTime
                 };
 
             user.OwnedGroups.Add(newGroup);
