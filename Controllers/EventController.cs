@@ -77,7 +77,7 @@ namespace turbo_funicular.Controllers
             var userId = (int)HttpContext.Session.GetInt32("userId");
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
             var createDate = DateTime.Now;
-
+                
             if (true)
             {
                 _dbContext.Events.Add(new Event()

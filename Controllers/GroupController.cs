@@ -68,18 +68,30 @@ namespace turbo_funicular.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,Name,Description,CreateTime,UpdateTime")] Group @group)
+        public async Task<IActionResult> Create(GroupViewModel @group)
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            if (ModelState.IsValid)
+            var userId = (int)HttpContext.Session.GetInt32("userId");
+            var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+            var createTime = DateTime.Now;
+
+            if (true)
             {
-                _dbContext.Groups.Add(@group);
+                _dbContext.Groups.Add(new Group() 
+                    {
+                        UserId = userId,
+                        User = user,
+                        Name = @group.Name,
+                        Description = @group.Description,
+                        CreateTime = createTime,
+                        UpdateTime = createTime
+                });
                 await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @group.UserId);
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", userId);
             return View(@group);
         }
 
