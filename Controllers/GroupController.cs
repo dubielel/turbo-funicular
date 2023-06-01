@@ -5,36 +5,38 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Data;
 using turbo_funicular.Models;
+using turbo_funicular.Data;
 
 namespace turbo_funicular.Controllers
 {
     public class GroupController : Controller
     {
-        private readonly GroupContext _context;
+        private readonly ILogger<GroupController> _logger;
+        private readonly ApplicationDbContext _dbContext;
 
-        public GroupController(GroupContext context)
+        public GroupController(ILogger<GroupController> logger, ApplicationDbContext dbContext)
         {
-            _context = context;
+            _logger = logger;
+            _dbContext = dbContext;
         }
 
         // GET: Group
         public async Task<IActionResult> Index()
         {
-            var groupContext = _context.Group.Include(g => g.User);
+            var groupContext = _dbContext.Groups.Include(g => g.User);
             return View(await groupContext.ToListAsync());
         }
 
         // GET: Group/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _dbContext.Groups == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var @group = await _dbContext.Groups
                 .Include(g => g.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@group == null)
@@ -48,7 +50,7 @@ namespace turbo_funicular.Controllers
         // GET: Group/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id");
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
             return View();
         }
 
@@ -61,28 +63,28 @@ namespace turbo_funicular.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@group);
-                await _context.SaveChangesAsync();
+                _dbContext.Groups.Add(@group);
+                await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @group.UserId);
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @group.UserId);
             return View(@group);
         }
 
         // GET: Group/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _dbContext.Groups == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group.FindAsync(id);
+            var @group = await _dbContext.Groups.FindAsync(id);
             if (@group == null)
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @group.UserId);
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @group.UserId);
             return View(@group);
         }
 
@@ -102,8 +104,8 @@ namespace turbo_funicular.Controllers
             {
                 try
                 {
-                    _context.Update(@group);
-                    await _context.SaveChangesAsync();
+                    _dbContext.Groups.Update(@group);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -118,19 +120,19 @@ namespace turbo_funicular.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", @group.UserId);
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @group.UserId);
             return View(@group);
         }
 
         // GET: Group/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Group == null)
+            if (id == null || _dbContext.Groups == null)
             {
                 return NotFound();
             }
 
-            var @group = await _context.Group
+            var @group = await _dbContext.Groups
                 .Include(g => g.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@group == null)
@@ -146,23 +148,23 @@ namespace turbo_funicular.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Group == null)
+            if (_dbContext.Groups == null)
             {
                 return Problem("Entity set 'GroupContext.Group'  is null.");
             }
-            var @group = await _context.Group.FindAsync(id);
+            var @group = await _dbContext.Groups.FindAsync(id);
             if (@group != null)
             {
-                _context.Group.Remove(@group);
+                _dbContext.Groups.Remove(@group);
             }
             
-            await _context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool GroupExists(int id)
         {
-          return (_context.Group?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_dbContext.Groups?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

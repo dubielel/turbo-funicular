@@ -5,37 +5,39 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Data;
+using turbo_funicular.Data;
 using turbo_funicular.Models;
 
 namespace turbo_funicular.Controllers
 {
     public class UserController : Controller
     {
-        private readonly UserContext _context;
+        private readonly ILogger<UserController> _logger;
+        private readonly ApplicationDbContext _dbContext;
 
-        public UserController(UserContext context)
+        public UserController(ILogger<UserController> logger, ApplicationDbContext dbContext)
         {
-            _context = context;
+            _logger = logger;
+            _dbContext = dbContext;
         }
 
         // GET: User
         public async Task<IActionResult> Index()
         {
-              return _context.User != null ? 
-                          View(await _context.User.ToListAsync()) :
+              return _dbContext.Users != null ? 
+                          View(await _dbContext.Users.ToListAsync()) :
                           Problem("Entity set 'UserContext.User'  is null.");
         }
 
         // GET: User/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _dbContext.Users == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User
+            var user = await _dbContext.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
@@ -60,8 +62,8 @@ namespace turbo_funicular.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
+                _dbContext.Users.Add(user);
+                await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(user);
@@ -70,12 +72,12 @@ namespace turbo_funicular.Controllers
         // GET: User/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _dbContext.Users == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User.FindAsync(id);
+            var user = await _dbContext.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -99,8 +101,8 @@ namespace turbo_funicular.Controllers
             {
                 try
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    _dbContext.Users.Update(user);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -121,12 +123,12 @@ namespace turbo_funicular.Controllers
         // GET: User/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.User == null)
+            if (id == null || _dbContext.Users == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.User
+            var user = await _dbContext.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (user == null)
             {
@@ -141,23 +143,23 @@ namespace turbo_funicular.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.User == null)
+            if (_dbContext.Users == null)
             {
                 return Problem("Entity set 'UserContext.User'  is null.");
             }
-            var user = await _context.User.FindAsync(id);
+            var user = await _dbContext.Users.FindAsync(id);
             if (user != null)
             {
-                _context.User.Remove(user);
+                _dbContext.Users.Remove(user);
             }
             
-            await _context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool UserExists(int id)
         {
-          return (_context.User?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_dbContext.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

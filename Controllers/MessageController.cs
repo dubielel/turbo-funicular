@@ -5,36 +5,38 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Data;
+using turbo_funicular.Data;
 using turbo_funicular.Models;
 
 namespace turbo_funicular.Controllers
 {
     public class MessageController : Controller
     {
-        private readonly MessageContext _context;
+        private readonly ILogger<MessageController> _logger;
+        private readonly ApplicationDbContext _dbContext;
 
-        public MessageController(MessageContext context)
+        public MessageController(ILogger<MessageController> logger, ApplicationDbContext dbContext)
         {
-            _context = context;
+            _logger = logger;
+            _dbContext = dbContext;
         }
 
         // GET: Message
         public async Task<IActionResult> Index()
         {
-            var messageContext = _context.Message.Include(m => m.Group).Include(m => m.User);
+            var messageContext = _dbContext.Messages.Include(m => m.Group).Include(m => m.User);
             return View(await messageContext.ToListAsync());
         }
 
         // GET: Message/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Message == null)
+            if (id == null || _dbContext.Messages == null)
             {
                 return NotFound();
             }
 
-            var message = await _context.Message
+            var message = await _dbContext.Messages
                 .Include(m => m.Group)
                 .Include(m => m.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -49,8 +51,8 @@ namespace turbo_funicular.Controllers
         // GET: Message/Create
         public IActionResult Create()
         {
-            ViewData["GroupId"] = new SelectList(_context.Set<Group>(), "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id");
+            ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
             return View();
         }
 
@@ -63,30 +65,30 @@ namespace turbo_funicular.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(message);
-                await _context.SaveChangesAsync();
+                _dbContext.Messages.Add(message);
+                await _dbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Set<Group>(), "Id", "Id", message.GroupId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", message.UserId);
+            ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id", message.GroupId);
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", message.UserId);
             return View(message);
         }
 
         // GET: Message/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Message == null)
+            if (id == null || _dbContext.Messages == null)
             {
                 return NotFound();
             }
 
-            var message = await _context.Message.FindAsync(id);
+            var message = await _dbContext.Messages.FindAsync(id);
             if (message == null)
             {
                 return NotFound();
             }
-            ViewData["GroupId"] = new SelectList(_context.Set<Group>(), "Id", "Id", message.GroupId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", message.UserId);
+            ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id", message.GroupId);
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", message.UserId);
             return View(message);
         }
 
@@ -106,8 +108,8 @@ namespace turbo_funicular.Controllers
             {
                 try
                 {
-                    _context.Update(message);
-                    await _context.SaveChangesAsync();
+                    _dbContext.Messages.Update(message);
+                    await _dbContext.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -122,20 +124,20 @@ namespace turbo_funicular.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GroupId"] = new SelectList(_context.Set<Group>(), "Id", "Id", message.GroupId);
-            ViewData["UserId"] = new SelectList(_context.Set<User>(), "Id", "Id", message.UserId);
+            ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id", message.GroupId);
+            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", message.UserId);
             return View(message);
         }
 
         // GET: Message/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Message == null)
+            if (id == null || _dbContext.Messages == null)
             {
                 return NotFound();
             }
 
-            var message = await _context.Message
+            var message = await _dbContext.Messages
                 .Include(m => m.Group)
                 .Include(m => m.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -152,23 +154,23 @@ namespace turbo_funicular.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Message == null)
+            if (_dbContext.Messages == null)
             {
                 return Problem("Entity set 'MessageContext.Message'  is null.");
             }
-            var message = await _context.Message.FindAsync(id);
+            var message = await _dbContext.Messages.FindAsync(id);
             if (message != null)
             {
-                _context.Message.Remove(message);
+                _dbContext.Messages.Remove(message);
             }
             
-            await _context.SaveChangesAsync();
+            await _dbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool MessageExists(int id)
         {
-          return (_context.Message?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_dbContext.Messages?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
