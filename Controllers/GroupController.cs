@@ -98,7 +98,7 @@ namespace turbo_funicular.Controllers
             user.OwnedGroups.Add(newGroup);
             _dbContext.Groups.Add(newGroup);
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Join", "UserGroup", new {groupId = newGroup.Id});
         }
 
         // GET: Group/Edit/5

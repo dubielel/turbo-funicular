@@ -116,12 +116,12 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            if (id == null || await _dbContext.Events.FirstOrDefaultAsync(e => e.Id == id) == null)
+            if (id == null || _dbContext.Events == null)
             {
                 return NotFound();
             }
 
-            var @event = await _dbContext.Events.FindAsync(id);
+            var @event = await _dbContext.Events.FirstOrDefaultAsync(e => e.Id == id);
             var userId = (int) HttpContext.Session.GetInt32("userId");
 
             if (@event.UserId != userId)
