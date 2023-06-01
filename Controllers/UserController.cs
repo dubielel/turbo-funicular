@@ -86,7 +86,10 @@ namespace turbo_funicular.Controllers
 
         // GET: User/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {  
+        {   
+            if(Convert.ToInt32(HttpContext.Session.Get("userId")) != 1)
+                return RedirectToAction("PermissionDenied", "Home");
+                
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 

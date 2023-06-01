@@ -73,6 +73,9 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
+            @event.UserId = Convert.ToInt32(HttpContext.Session.Get("userId"));
+            @event.CreateDate = DateTime.Now;
+
             if (ModelState.IsValid)
             {
                 _dbContext.Events.Add(@event);
@@ -174,7 +177,7 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
-                
+
             if (_dbContext.Events == null)
             {
                 return Problem("Entity set 'EventContext.Event'  is null.");
