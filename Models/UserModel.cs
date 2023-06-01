@@ -18,7 +18,7 @@ namespace turbo_funicular.Models {
         public virtual ICollection<UserEvent> UserEvents { get; set; }
         public virtual ICollection<Message> Messages { get; set; }
 
-         public void SetPassword(string password)
+        public void SetPassword(string password)
         {
             using (var sha256 = SHA256.Create())
             {

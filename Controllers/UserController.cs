@@ -58,7 +58,7 @@ namespace turbo_funicular.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Username,PasswordHash")] User user)
+        public async Task<IActionResult> Create(UserViewModel user)
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
@@ -66,22 +66,28 @@ namespace turbo_funicular.Controllers
             if(HttpContext.Session.GetInt32("userId") != 1)
                 return RedirectToAction("PermissionDenied", "Home");
 
-            if (ModelState.IsValid)
-            {   
-                if (!VerifyUniqueUsername(user.Username))
-                {
-                    ModelState.AddModelError(string.Empty, "Username already in use");
-                    return View();
-                }
-
-                user.SetPassword(user.PasswordHash);
-                user.CreateDate = DateTime.Now;
-
-                _dbContext.Users.Add(user);
-                await _dbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            if (!VerifyUniqueUsername(user.Username))
+            {
+                ModelState.AddModelError(string.Empty, "Username already in use");
+                return View();
             }
-            return View(user);
+
+            var createDate = DateTime.Now;
+
+            _logger.LogInformation(user.Password);
+
+            var newUser = new User()
+            {
+                Username = user.Username,
+                PasswordHash = "",
+                CreateDate = createDate
+            };
+            newUser.SetPassword(user.Password);
+
+
+            _dbContext.Users.Add(newUser);
+            await _dbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         private bool UserExists(int id)
