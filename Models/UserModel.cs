@@ -45,5 +45,17 @@ namespace turbo_funicular.Models {
                 return PasswordHash == hashedPassword;
             }
         }
+
+        public bool isInGroup(int groupId)
+        {
+            var obj = UserGroups.FirstOrDefault(e => (e.UserId == Id && e.GroupId == groupId));
+            return obj != null;
+        }
+
+        public bool isInEvent(int eventId)
+        {
+            var obj = UserEvents.FirstOrDefault(e => (e.UserId == Id && e.EventId == eventId));
+            return obj != null;
+        }
     }
 }
