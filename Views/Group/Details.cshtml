@@ -23,19 +23,19 @@
         flex: 1;
     }
 
-    .right-div dl {
-        display: flex;
-        flex-wrap: wrap;
-    }
+        .right-div dl {
+            display: flex;
+            flex-wrap: wrap;
+        }
 
-    .right-div dt {
-        flex: 1 1 50%;
-    }
+        .right-div dt {
+            flex: 1 1 50%;
+        }
 
-    .right-div dd {
-        flex: 2 1 50%;
-        word-wrap: break-word;
-    }
+        .right-div dd {
+            flex: 2 1 50%;
+            word-wrap: break-word;
+        }
 
     .bottom-div {
         margin-top: 20px;
@@ -46,12 +46,13 @@
         border: 1px solid #ccc;
         border-radius: 4px;
         font-size: 14px;
+        margin-bottom: 10px;
     }
 
-    .input-field:focus {
-        outline: none;
-        border-color: #4CAF50;
-    }
+        .input-field:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
 
     .submit-button {
         padding: 10px 20px;
@@ -62,16 +63,33 @@
         cursor: pointer;
     }
 
-    .submit-button:hover {
-        background-color: #45a049;
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+    .message {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
     }
 </style>
 
 <div class="container">
     <div class="left-div">
-        @foreach (var message in Model.Messages)
-        {
-        <p>@message.Content</p>
+        @{
+            var messages = Model.Messages;
+            if (messages != null)
+            {
+                foreach (var message in messages)
+                {
+                    <div class="message">
+                        <p><strong>@message.User.Username</strong> wrote on @message.CreateDate:</p>
+                        <p>@message.Content</p>
+                    </div>
+                }
+            }
         }
     </div>
 
@@ -95,10 +113,10 @@
             </dd>
             <dt>Participants:</dt>
             <div>
-                @foreach (var u in Model.UserGroups)
+                @foreach (var userGroup in Model.UserGroups)
                 {
                 <dd>
-                    @u.User.Username
+                    @userGroup.User.Username
                 </dd>
                 }
             </div>
