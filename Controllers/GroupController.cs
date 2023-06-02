@@ -28,6 +28,8 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+            
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             var groupContext = _dbContext.Groups.Include(g => g.User);
             return View(await groupContext.ToListAsync());
@@ -38,6 +40,8 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             if (id == null || _dbContext.Groups == null)
             {
@@ -60,6 +64,8 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
             return View();
@@ -106,6 +112,8 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             if (id == null || _dbContext.Groups == null)
             {
@@ -186,6 +194,8 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+            
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             if (id == null || _dbContext.Groups == null)
             {

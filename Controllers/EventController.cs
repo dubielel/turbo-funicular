@@ -1,9 +1,3 @@
-using System.Reflection.Metadata;
-using System.Collections.ObjectModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +23,8 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
+
             var eventContext = _dbContext.Events.Include(e => e.User);
             return View(await eventContext.ToListAsync());
         }
@@ -38,6 +34,8 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+            
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             if (id == null || _dbContext.Events == null)
             {
@@ -60,6 +58,8 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
             return View();
@@ -114,8 +114,7 @@ namespace turbo_funicular.Controllers
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            if(!HttpContext.Session.Keys.Contains("userId"))
-                return RedirectToAction("Login", "Account");
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             if (id == null || _dbContext.Events == null)
             {
@@ -203,6 +202,8 @@ namespace turbo_funicular.Controllers
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+            
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             if (id == null || _dbContext.Events == null)
             {

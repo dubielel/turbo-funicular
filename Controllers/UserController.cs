@@ -27,6 +27,8 @@ namespace turbo_funicular.Controllers
         {
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+            
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             return _dbContext.Users != null ? 
                           View(await _dbContext.Users.ToListAsync()) :
@@ -38,6 +40,8 @@ namespace turbo_funicular.Controllers
         {
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
+            
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             if (id == null || _dbContext.Users == null)
             {
@@ -59,7 +63,9 @@ namespace turbo_funicular.Controllers
         {
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
-                
+            
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
+
             return View();
         }
 
