@@ -53,16 +53,16 @@
                 }
                 if (isInGroup)
                 {
-                    <td>
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                        <a asp-action="Leave" asp-controller="UserGroup" asp-route-groupId="@item.Id">Leave</a>
-                    </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a asp-action="Leave" asp-controller="UserGroup" asp-route-groupId="@item.Id">Leave</a>
+            </td>
                 }
                 else
                 {
-                    <td>
-                        <a asp-action="Join" asp-controller="UserGroup" asp-route-groupId="@item.Id">Join</a>
-                    </td>
+            <td>
+                <a asp-action="Join" asp-controller="UserGroup" asp-route-groupId="@item.Id">Join</a>
+            </td>
                 }
             }
 
