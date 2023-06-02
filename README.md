@@ -15,6 +15,7 @@ In Events section, they can create events - that means for example some meetings
 
 ## Authors
 * Kacper Cienkosz
-* Mi³osz Dubiel
+* Milosz Dubiel
 * ChatGPT
 * Night without sleep
+* (Don't loose any sleep over the two last contributors listed above, please :) )
