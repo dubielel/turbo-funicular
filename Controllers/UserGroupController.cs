@@ -72,7 +72,7 @@ namespace turbo_funicular.Controllers
                 return RedirectToRoute("GroupDetails", new { id = @group.Id });;
             }
 
-            if (@group.User.Id == userId)
+            if (@group.UserId == userId)
             {
                 ModelState.AddModelError(string.Empty, "Host cannot leave their group");
                 return RedirectToRoute("GroupDetails", new { id = @group.Id });;

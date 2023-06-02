@@ -81,7 +81,7 @@ namespace turbo_funicular.Controllers
                 return RedirectToRoute("EventDetails", new { id = @event.Id });
             }
 
-            if (@event.User.Id == userId)
+            if (@event.UserId == userId)
             {
                 ModelState.AddModelError(string.Empty, "Host cannot leave their event");
                 return RedirectToRoute("EventDetails", new { id = @event.Id });

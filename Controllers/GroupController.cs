@@ -26,6 +26,11 @@ namespace turbo_funicular.Controllers
             ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             var groupContext = _dbContext.Groups.Include(g => g.User);
+            foreach (var @group in await groupContext.ToListAsync())
+            {
+                @group.Messages = @group.GetMesseges(_dbContext);
+                @group.UserGroups = @group.GetUserGroups(_dbContext);
+            }
             return View(await groupContext.ToListAsync());
         }
 
@@ -50,8 +55,8 @@ namespace turbo_funicular.Controllers
             }
 
 
-            @group.Messages = group.GetMesseges(_dbContext);
-            @group.UserGroups = group.GetUserGroups(_dbContext);
+            @group.Messages = @group.GetMesseges(_dbContext);
+            @group.UserGroups = @group.GetUserGroups(_dbContext);
             return View(@group);
         }
 

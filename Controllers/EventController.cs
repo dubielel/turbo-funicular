@@ -26,6 +26,10 @@ namespace turbo_funicular.Controllers
             ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             var eventContext = _dbContext.Events.Include(e => e.User);
+            foreach (var @event in await eventContext.ToListAsync())
+            {
+                @event.UserEvents = @event.GetUserEvents(_dbContext);
+            }
             return View(await eventContext.ToListAsync());
         }
 
