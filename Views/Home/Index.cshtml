@@ -4,5 +4,16 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h2 class="display-4">to</h2>
+    <h1 class="display-4">turbo_funicular</h1>
+
+    @if (ViewData["userId"] == null)
+    {
+        <div>
+            <hr />
+            <p><a asp-action="Login" asp-controller="Account">Log in</a> if You have an account created by Administrator</p>
+            <hr />
+            <p>If You don't have it - that's a pity, we cannot do anything in that matter</p>
+        </div>
+    }
 </div>

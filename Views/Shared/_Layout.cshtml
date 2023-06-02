@@ -28,7 +28,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Event" asp-action="Index">Events</a>
                         </li>
-                        @if (!ViewData.ContainsKey("userId") && ViewData["userId"] != null) 
+                        @if (ViewData["userId"] != null) 
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
