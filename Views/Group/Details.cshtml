@@ -4,45 +4,117 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>
+    @Html.DisplayFor(model => model.Name)
+</h1>
+<hr />
+
+<style>
+    .container {
+        display: flex;
+    }
+
+    .left-div {
+        flex: 2;
+        overflow-y: scroll;
+    }
+
+    .right-div {
+        flex: 1;
+    }
+
+    .right-div dl {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .right-div dt {
+        flex: 1 1 50%;
+    }
+
+    .right-div dd {
+        flex: 2 1 50%;
+        word-wrap: break-word;
+    }
+
+    .bottom-div {
+        margin-top: 20px;
+    }
+
+    .input-field {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+
+    .input-field:focus {
+        outline: none;
+        border-color: #4CAF50;
+    }
+
+    .submit-button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .submit-button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+<div class="container">
+    <div class="left-div">
+        @foreach (var message in Model.Messages)
+        {
+        <p>@message.Content</p>
+        }
+    </div>
+
+    <div class="right-div">
+        <dl>
+            <dt>Host:</dt>
+            <dd>
+                @Html.DisplayFor(model => model.User.Username)
+            </dd>
+            <dt>Description:</dt>
+            <dd>
+                @Html.DisplayFor(model => model.Description)
+            </dd>
+            <dt>Created:</dt>
+            <dd>
+                @Html.DisplayFor(model => model.CreateTime)
+            </dd>
+            <dt>Last message time:</dt>
+            <dd>
+                @Html.DisplayFor(model => model.UpdateTime)
+            </dd>
+            <dt>Participants:</dt>
+            <div>
+                @foreach (var u in Model.UserGroups)
+                {
+                <dd>
+                    @u.User.Username
+                </dd>
+                }
+            </div>
+        </dl>
+    </div>
+</div>
+
+<div class="bottom-div">
+    <h4>Create New Message</h4>
+    <form asp-action="Create" asp-controller="Message">
+        <input type="hidden" name="GroupId" value="@Model.Id" />
+        <input type="text" name="Content" placeholder="Enter your message" class="input-field">
+        <button type="submit" class="submit-button">Submit</button>
+    </form>
+</div>
 
 <div>
-    <h4>Group</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            <p>Host:</p>
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.User.Username)
-        </dd>
-        <dt class = "col-sm-2">
-            <p>Name:</p>
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            <p>Description:</p>
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            <p>Created:</p>
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreateTime)
-        </dd>
-        <dt class = "col-sm-2">
-            <p>Updated:</p>
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdateTime)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

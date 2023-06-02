@@ -94,7 +94,7 @@ namespace turbo_funicular.Controllers
                 CreateDate = DateTime.Now,
                 Content = message.Content
             };
-            
+
             user.Messages.Add(newMessage);
             @group.Messages.Add(newMessage);
             _dbContext.Messages.Add(newMessage);

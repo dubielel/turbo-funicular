@@ -51,7 +51,7 @@ namespace turbo_funicular.Controllers
             _dbContext.UserGroups.Add(userGroup);
 
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction("Details", "Group", new {groupId = @group.Id});
+            return RedirectToAction("Details", "Group", groupId);
         }
 
         public async Task<IActionResult> Leave(int? groupId)
