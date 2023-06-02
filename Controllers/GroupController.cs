@@ -231,8 +231,20 @@ namespace turbo_funicular.Controllers
             }
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
-            user.OwnedGroups.Remove(@group);
 
+            foreach (var userGroup in @group.UserGroups)
+            {
+                userGroup.User.UserGroups.Remove(userGroup);
+                @group.UserGroups.Remove(userGroup);
+                if (@group != null)
+                {
+                    _dbContext.UserGroups.Remove(userGroup);
+                }
+                
+                await _dbContext.SaveChangesAsync();
+            }
+
+            user.OwnedGroups.Remove(@group);
             if (@group != null)
             {
                 _dbContext.Groups.Remove(@group);

@@ -1,3 +1,4 @@
+using System.Reflection.Metadata;
 using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
@@ -104,7 +105,7 @@ namespace turbo_funicular.Controllers
             _dbContext.Events.Add(newEvent);
 
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Join", "UserEvent", new {eventId = newEvent.Id});;
         }
 
         // GET: Event/Edit/5
@@ -247,6 +248,19 @@ namespace turbo_funicular.Controllers
             }
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+
+            foreach (var userEvent in @event.UserEvents)
+            {
+                userEvent.User.UserEvents.Remove(userEvent);
+                @event.UserEvents.Remove(userEvent);
+                if (@event != null)
+                {
+                    _dbContext.UserEvents.Remove(userEvent);
+                }
+                
+                await _dbContext.SaveChangesAsync();
+            }
+
             user.OwnedEvents.Remove(@event);
 
             if (@event != null)
