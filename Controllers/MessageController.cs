@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -55,141 +51,55 @@ namespace turbo_funicular.Controllers
         }
 
         // GET: Message/Create
-        public IActionResult Create()
-        {   
-            if(!HttpContext.Session.Keys.Contains("userId"))
-                return RedirectToAction("Login", "Account");
+        // public IActionResult Create()
+        // {   
+        //     if(!HttpContext.Session.Keys.Contains("userId"))
+        //         return RedirectToAction("Login", "Account");
 
-            ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
-            return View();
-        }
+        //     ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id");
+        //     ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id");
+        //     return View();
+        // }
 
         // POST: Message/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UserId,GroupId,Content,CreateDate")] Message message)
+        public async Task<IActionResult> Create(int? groupId, MessageView message)
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            if (ModelState.IsValid)
-            {
-                _dbContext.Messages.Add(message);
-                await _dbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id", message.GroupId);
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", message.UserId);
-            return View(message);
-        }
-
-        // GET: Message/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {   
-            if(!HttpContext.Session.Keys.Contains("userId"))
-                return RedirectToAction("Login", "Account");
-
-            if (id == null || _dbContext.Messages == null)
+            if (groupId == null)
             {
                 return NotFound();
             }
 
-            var message = await _dbContext.Messages.FindAsync(id);
-            if (message == null)
-            {
-                return NotFound();
-            }
-            ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id", message.GroupId);
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", message.UserId);
-            return View(message);
-        }
+            var userId = (int) HttpContext.Session.GetInt32("userId");
+            var @group = await _dbContext.Groups.FirstOrDefaultAsync(m => m.Id == groupId);
+            var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
 
-        // POST: Message/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UserId,GroupId,Content,CreateDate")] Message message)
-        {   
-            if(!HttpContext.Session.Keys.Contains("userId"))
-                return RedirectToAction("Login", "Account");
-
-            if (id != message.Id)
+            if (!user.isInGroup((int)groupId))
             {
-                return NotFound();
+                return RedirectToAction("PermissionDenied", "Home");
             }
 
-            if (ModelState.IsValid)
+            var newMessage = new Message()
             {
-                try
-                {
-                    _dbContext.Messages.Update(message);
-                    await _dbContext.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!MessageExists(message.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["GroupId"] = new SelectList(_dbContext.Groups, "Id", "Id", message.GroupId);
-            ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", message.UserId);
-            return View(message);
-        }
-
-        // GET: Message/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {   
-            if(!HttpContext.Session.Keys.Contains("userId"))
-                return RedirectToAction("Login", "Account");
-
-            if (id == null || _dbContext.Messages == null)
-            {
-                return NotFound();
-            }
-
-            var message = await _dbContext.Messages
-                .Include(m => m.Group)
-                .Include(m => m.User)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (message == null)
-            {
-                return NotFound();
-            }
-
-            return View(message);
-        }
-
-        // POST: Message/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {   
-            if(!HttpContext.Session.Keys.Contains("userId"))
-                return RedirectToAction("Login", "Account");
-
-            if (_dbContext.Messages == null)
-            {
-                return Problem("Entity set 'MessageContext.Message'  is null.");
-            }
-            var message = await _dbContext.Messages.FindAsync(id);
-            if (message != null)
-            {
-                _dbContext.Messages.Remove(message);
-            }
+                UserId = userId,
+                GroupId = (int)groupId,
+                User = user,
+                Group = @group,
+                CreateDate = DateTime.Now,
+                Content = message.Content
+            };
             
+            user.Messages.Add(newMessage);
+            @group.Messages.Add(newMessage);
+            _dbContext.Messages.Add(newMessage);
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Group", new {groupId = @group.Id});
         }
 
         private bool MessageExists(int id)
