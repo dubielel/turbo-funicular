@@ -50,6 +50,7 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
 
+            @event.UserEvents = @event.GetUserEvents(_dbContext);
             return View(@event);
         }
 
@@ -133,6 +134,7 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
             ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @event.UserId);
+            @event.UserEvents = @event.GetUserEvents(_dbContext);
             return View(@event);
         }
 
@@ -224,6 +226,7 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
 
+            @event.UserEvents = @event.GetUserEvents(_dbContext);
             return View(@event);
         }
 

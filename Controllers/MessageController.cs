@@ -79,6 +79,11 @@ namespace turbo_funicular.Controllers
             var userId = (int) HttpContext.Session.GetInt32("userId");
             var @group = await _dbContext.Groups.FirstOrDefaultAsync(m => m.Id == message.GroupId);
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+            
+            if (@group == null)
+            {
+                return NotFound();
+            }
 
             if (!user.isInGroup(_dbContext, (int)message.GroupId))
             {
@@ -94,9 +99,20 @@ namespace turbo_funicular.Controllers
                 CreateDate = DateTime.Now,
                 Content = message.Content
             };
-
+            
             _dbContext.Messages.Add(newMessage);
             await _dbContext.SaveChangesAsync();
+
+            @group.UpdateTime = DateTime.Now;
+            try
+            {
+                _dbContext.Groups.Update(@group);
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
             return RedirectToRoute("GroupDetails", new { id = @group.Id });
         }
 

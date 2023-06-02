@@ -52,7 +52,6 @@ namespace turbo_funicular.Controllers
 
             @group.Messages = group.GetMesseges(_dbContext);
             @group.UserGroups = group.GetUserGroups(_dbContext);
-
             return View(@group);
         }
 
@@ -129,6 +128,8 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
             ViewData["UserId"] = new SelectList(_dbContext.Users, "Id", "Id", @group.UserId);
+            @group.Messages = group.GetMesseges(_dbContext);
+            @group.UserGroups = group.GetUserGroups(_dbContext);
             return View(@group);
         }
 
@@ -213,6 +214,8 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
 
+            @group.Messages = group.GetMesseges(_dbContext);
+            @group.UserGroups = group.GetUserGroups(_dbContext);
             return View(@group);
         }
 

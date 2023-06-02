@@ -54,7 +54,12 @@ namespace turbo_funicular.Controllers
             {
                 return NotFound();
             }
-
+            
+            user.OwnedEvents = user.GetOwnedEvents(_dbContext);
+            user.OwnedGroups = user.GetOwnedGroups(_dbContext);
+            user.Messages = user.GetMesseges(_dbContext);
+            user.UserEvents = user.GetUserEvents(_dbContext);
+            user.UserGroups = user.GetUserGroups(_dbContext);
             return View(user);
         }
 
