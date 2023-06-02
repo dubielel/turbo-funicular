@@ -33,18 +33,39 @@
 
             @if (item.UserId == (int)ViewData["userId"])
             {
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
             }
             else
             {
-                <td>
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                </td>
+                bool isInGroup = false;
+                foreach (var ug in item.UserGroups)
+                {
+                    if (ug.UserId == (int)ViewData["userId"])
+                    {
+
+                    isInGroup = true;
+                    break;
+                    }
+                }
+                if (isInGroup)
+                {
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                        <a asp-action="Leave" asp-controller="UserGroup" asp-route-id="@item.Id">Leave</a>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <a asp-action="Join" asp-controller="UserGroup" asp-route-id="@item.Id">Join</a>
+                    </td>
+                }
             }
+
         </tr>
 }
     </tbody>
