@@ -99,7 +99,7 @@ namespace turbo_funicular.Controllers
             @group.Messages.Add(newMessage);
             _dbContext.Messages.Add(newMessage);
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction("Details", "Group", new {groupId = @group.Id});
+            return RedirectToRoute("GroupDetails", new { id = @group.Id });
         }
 
         private bool MessageExists(int id)
