@@ -55,6 +55,11 @@ app.UseEndpoints(endpoints =>
         pattern: "Event/Details/{id}",
         defaults: new { controller = "Event", action = "Details" }
     );
+    endpoints.MapControllerRoute(
+        name: "JoinGroup",
+        pattern: "UserGroup/Join/{groupId}",
+        defaults: new { controller = "UserGroup", action = "Join" }
+    );
 });
 
 app.Run();

@@ -18,16 +18,22 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        if(HttpContext.Session.Keys.Contains("userId"))
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
         return View();
     }
 
     public IActionResult Privacy()
     {
+        if(HttpContext.Session.Keys.Contains("userId"))
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
         return View();
     }
 
     public IActionResult PermissionDenied()
     {
+        if(HttpContext.Session.Keys.Contains("userId"))
+            ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
         return View();
     }
 
