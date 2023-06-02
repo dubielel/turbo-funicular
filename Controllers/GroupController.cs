@@ -56,6 +56,9 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
 
+            ViewData["Messeges"] = group.GetMesseges(_dbContext);
+            ViewData["UserGroups"] = group.GetUserGroups(_dbContext);
+
             return View(@group);
         }
 
