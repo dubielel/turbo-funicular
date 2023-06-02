@@ -30,11 +30,41 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
+
+            @if (item.UserId == (int)ViewData["userId"])
+            {
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
             </td>
+            }
+            else
+            {
+                bool isInEvent = false;
+                foreach (var ue in item.UserEvents)
+                {
+                    if (ue.UserId == (int)ViewData["userId"])
+                    {
+
+                    isInEvent = true;
+                    break;
+                    }
+                }
+                if (isInEvent)
+                {
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a asp-action="Leave" asp-controller="UserEvent" asp-route-id="@item.Id">Leave</a>
+            </td>
+                }
+                else
+                {
+            <td>
+                <a asp-action="Join" asp-controller="UserEvent" asp-route-id="@item.Id">Join</a>
+            </td>
+                }
+            }
         </tr>
 }
     </tbody>
