@@ -9,7 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromSeconds(100000000);
@@ -38,8 +38,23 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
-);
+    );
+
 
 app.UseSession();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "GroupDetails",
+        pattern: "Group/Details/{id}",
+        defaults: new { controller = "Group", action = "Details" }
+    );
+    endpoints.MapControllerRoute(
+        name: "EventDetails",
+        pattern: "Event/Details/{id}",
+        defaults: new { controller = "Event", action = "Details" }
+    );
+});
 
 app.Run();

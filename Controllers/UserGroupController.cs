@@ -33,7 +33,7 @@ namespace turbo_funicular.Controllers
                             e => (e.UserId == userId && e.GroupId == groupId)) == null))
             {
                 ModelState.AddModelError(string.Empty, "User already in group");
-                return RedirectToAction("Details", "Group", new {groupId = @group.Id});
+                return RedirectToRoute("GroupDetails", new { id = @group.Id });;
             }
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
@@ -51,7 +51,7 @@ namespace turbo_funicular.Controllers
             _dbContext.UserGroups.Add(userGroup);
 
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction("Details", "Group", groupId);
+            return RedirectToRoute("GroupDetails", new { id = @group.Id });;
         }
 
         public async Task<IActionResult> Leave(int? groupId)
@@ -72,13 +72,13 @@ namespace turbo_funicular.Controllers
             if ( userGroup == null)
             {
                 ModelState.AddModelError(string.Empty, "User not in group");
-                return RedirectToAction("Details", "Group", new {groupId = @group.Id});
+                return RedirectToRoute("GroupDetails", new { id = @group.Id });;
             }
 
             if (@group.User.Id == userId)
             {
                 ModelState.AddModelError(string.Empty, "Host cannot leave their group");
-                return RedirectToAction("Details", "Group", new {groupId = @group.Id});
+                return RedirectToRoute("GroupDetails", new { id = @group.Id });;
             }
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);

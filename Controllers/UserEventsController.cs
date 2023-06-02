@@ -33,7 +33,7 @@ namespace turbo_funicular.Controllers
                             e => (e.UserId == userId && e.EventId == eventId)) == null))
             {
                 ModelState.AddModelError(string.Empty, "User already in event");
-                return RedirectToAction("Details", "Event", new {groupId = @event.Id});
+                return RedirectToRoute("EventDetails", new { id = @event.Id });
             }
 
             var numberOfParticipants = await _dbContext.UserEvents.CountAsync(e => e.EventId == eventId);
@@ -57,7 +57,7 @@ namespace turbo_funicular.Controllers
             _dbContext.UserEvents.Add(userEvent);
 
             await _dbContext.SaveChangesAsync();
-            return RedirectToAction("Details", "Event", new {groupId = @event.Id});
+            return RedirectToRoute("EventDetails", new { id = @event.Id });
         }
 
         public async Task<IActionResult> Leave(int? eventId)
@@ -78,13 +78,13 @@ namespace turbo_funicular.Controllers
             if (userEvent == null)
             {
                 ModelState.AddModelError(string.Empty, "User not in event");
-                return RedirectToAction("Details", "Event", new {groupId = @event.Id});
+                return RedirectToRoute("EventDetails", new { id = @event.Id });
             }
 
             if (@event.User.Id == userId)
             {
                 ModelState.AddModelError(string.Empty, "Host cannot leave their event");
-                return RedirectToAction("Details", "Event", new {groupId = @event.Id});
+                return RedirectToRoute("EventDetails", new { id = @event.Id });
             }
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
