@@ -27,7 +27,10 @@ namespace turbo_funicular.Controllers
         {
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
-            
+
+            if (HttpContext.Session.GetInt32("userId") != 1)
+                return RedirectToAction("PermissionDenied", "Home");
+
             ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             return _dbContext.Users != null ? 
@@ -40,7 +43,10 @@ namespace turbo_funicular.Controllers
         {
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
-            
+
+            if (HttpContext.Session.GetInt32("userId") != 1)
+                return RedirectToAction("PermissionDenied", "Home");
+
             ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             if (id == null || _dbContext.Users == null)
@@ -68,7 +74,10 @@ namespace turbo_funicular.Controllers
         {
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
-            
+
+            if (HttpContext.Session.GetInt32("userId") != 1)
+                return RedirectToAction("PermissionDenied", "Home");
+
             ViewData["userId"] = (int) HttpContext.Session.GetInt32("userId");
 
             return View();
