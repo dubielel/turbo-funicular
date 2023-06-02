@@ -55,13 +55,13 @@
                 {
             <td>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                <a asp-action="Leave" asp-controller="UserEvent" asp-route-groupId="@item.Id">Leave</a>
+                <a asp-action="Leave" asp-controller="UserEvent" asp-route-eventId="@item.Id">Leave</a>
             </td>
                 }
                 else
                 {
             <td>
-                <a asp-action="Join" asp-controller="UserEvent" asp-route-groupId="@item.Id">Join</a>
+                <a asp-action="Join" asp-controller="UserEvent" asp-route-eventId="@item.Id">Join</a>
             </td>
                 }
             }

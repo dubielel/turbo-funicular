@@ -67,12 +67,12 @@ app.UseEndpoints(endpoints =>
     );
     endpoints.MapControllerRoute(
         name: "JoinEvent",
-        pattern: "UserEvent/Join/{groupId}",
+        pattern: "UserEvent/Join/{eventId}",
         defaults: new { controller = "UserEvent", action = "Join" }
     );
     endpoints.MapControllerRoute(
         name: "LeaveEvent",
-        pattern: "UserEvent/Leave/{groupId}",
+        pattern: "UserEvent/Leave/{eventId}",
         defaults: new { controller = "UserEvent", action = "Leave" }
     );
 });
