@@ -66,21 +66,21 @@ namespace turbo_funicular.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? groupId, MessageView message)
+        public async Task<IActionResult> Create(MessageView message)
         {   
             if(!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
 
-            if (groupId == null)
+            if (message.GroupId == null)
             {
                 return NotFound();
             }
 
             var userId = (int) HttpContext.Session.GetInt32("userId");
-            var @group = await _dbContext.Groups.FirstOrDefaultAsync(m => m.Id == groupId);
+            var @group = await _dbContext.Groups.FirstOrDefaultAsync(m => m.Id == message.GroupId);
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
 
-            if (!user.isInGroup((int)groupId))
+            if (!user.isInGroup((int)message.GroupId))
             {
                 return RedirectToAction("PermissionDenied", "Home");
             }
@@ -88,7 +88,7 @@ namespace turbo_funicular.Controllers
             var newMessage = new Message()
             {
                 UserId = userId,
-                GroupId = (int)groupId,
+                GroupId = message.GroupId,
                 User = user,
                 Group = @group,
                 CreateDate = DateTime.Now,
