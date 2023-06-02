@@ -29,12 +29,28 @@ namespace turbo_funicular.Models {
 
         public List<Message> GetMesseges(ApplicationDbContext dbContext)
         {
-            return dbContext.Messages.Where(e => e.GroupId == Id).ToList();
+            var messages = dbContext.Messages.Where(e => e.GroupId == Id).ToList();
+
+            foreach (var message in messages)
+            {
+                message.User = dbContext.Users.Find(message.UserId);
+                message.Group = dbContext.Groups.Find(message.GroupId);
+            }
+
+            return messages;
         }
 
         public List<UserGroup> GetUserGroups(ApplicationDbContext dbContext)
         {
-            return dbContext.UserGroups.Where(e => e.GroupId == Id).ToList();
+            var userGroups = dbContext.UserGroups.Where(e => e.GroupId == Id).ToList();
+
+            foreach (var userGroup in userGroups)
+            {
+                userGroup.User = dbContext.Users.Find(userGroup.UserId);
+                userGroup.Group = dbContext.Groups.Find(userGroup.GroupId);
+            }
+
+            return userGroups;
         }
     }
 }

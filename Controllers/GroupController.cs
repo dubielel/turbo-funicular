@@ -43,12 +43,12 @@ namespace turbo_funicular.Controllers
             }
 
             var @group = await _dbContext.Groups
-                .Include(g => g.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (@group == null)
             {
                 return NotFound();
             }
+
 
             @group.Messages = group.GetMesseges(_dbContext);
             @group.UserGroups = group.GetUserGroups(_dbContext);

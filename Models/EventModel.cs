@@ -25,7 +25,15 @@ namespace turbo_funicular.Models {
 
         public List<UserEvent> GetUserEvents(ApplicationDbContext dbContext)
         {
-            return dbContext.UserEvents.Where(e => e.EventId == Id).ToList();
+            var userEvents = dbContext.UserEvents.Where(e => e.EventId == Id).ToList();
+
+            foreach (var userEvent in userEvents)
+            {
+                userEvent.User = dbContext.Users.Find(userEvent.UserId);
+                userEvent.Event = dbContext.Events.Find(userEvent.EventId);
+            }
+
+            return userEvents;
         }
     }
 }

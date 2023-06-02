@@ -21,9 +21,6 @@ namespace turbo_funicular.Controllers
         {   
             if (!HttpContext.Session.Keys.Contains("userId"))
                 return RedirectToAction("Login", "Account");
-
-            _logger.LogInformation("wszedłem========");
-            _logger.LogInformation(groupId.ToString());
             
             var userId = (int) HttpContext.Session.GetInt32("userId");
             var @group = await _dbContext.Groups.FirstOrDefaultAsync(e => e.Id == groupId);
@@ -31,8 +28,6 @@ namespace turbo_funicular.Controllers
             if (groupId == null || @group == null) {
                 return NotFound();
             }
-
-            _logger.LogInformation("wszedłem!!!!!!!");
 
             if (!(await _dbContext.UserGroups.FirstOrDefaultAsync(
                             e => (e.UserId == userId && e.GroupId == groupId)) == null))
@@ -52,7 +47,6 @@ namespace turbo_funicular.Controllers
             };
 
             _dbContext.UserGroups.Add(userGroup);
-
             await _dbContext.SaveChangesAsync();
             return RedirectToRoute("GroupDetails", new { id = @group.Id });;
         }
