@@ -1,9 +1,3 @@
-using System.Collections.ObjectModel;
-using System.Data.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -56,8 +50,8 @@ namespace turbo_funicular.Controllers
                 return NotFound();
             }
 
-            ViewData["Messeges"] = group.GetMesseges(_dbContext);
-            ViewData["UserGroups"] = group.GetUserGroups(_dbContext);
+            @group.Messages = group.GetMesseges(_dbContext);
+            @group.UserGroups = group.GetUserGroups(_dbContext);
 
             return View(@group);
         }
