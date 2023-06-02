@@ -25,7 +25,10 @@ namespace turbo_funicular.Controllers
         // GET: User
         public async Task<IActionResult> Index()
         {
-              return _dbContext.Users != null ? 
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
+            return _dbContext.Users != null ? 
                           View(await _dbContext.Users.ToListAsync()) :
                           Problem("Entity set 'UserContext.User'  is null.");
         }
@@ -33,6 +36,9 @@ namespace turbo_funicular.Controllers
         // GET: User/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+
             if (id == null || _dbContext.Users == null)
             {
                 return NotFound();
@@ -51,6 +57,9 @@ namespace turbo_funicular.Controllers
         // GET: User/Create
         public IActionResult Create()
         {
+            if(!HttpContext.Session.Keys.Contains("userId"))
+                return RedirectToAction("Login", "Account");
+                
             return View();
         }
 
