@@ -46,8 +46,6 @@ namespace turbo_funicular.Controllers
                 IsModerator = false,
             };
 
-            user.UserGroups.Add(userGroup);
-            group.UserGroups.Add(userGroup);
             _dbContext.UserGroups.Add(userGroup);
 
             await _dbContext.SaveChangesAsync();
@@ -82,8 +80,6 @@ namespace turbo_funicular.Controllers
             }
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
-            user.UserGroups.Remove(userGroup);
-            @group.UserGroups.Remove(userGroup);
 
             if (@group != null)
             {

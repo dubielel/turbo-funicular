@@ -1,17 +1,19 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Cryptography;
 using System.Text;
+using turbo_funicular.Data;
 
 namespace turbo_funicular.Models {
     public class User
     {   
         public User()
         {
-            OwnedGroups = new List<Group>();
-            OwnedEvents = new List<Event>();
-            UserGroups = new List<UserGroup>();
-            UserEvents = new List<UserEvent>();
-            Messages = new List<Message>();
+            OwnedGroups = new Collection<Group>();
+            OwnedEvents = new Collection<Event>();
+            UserGroups = new Collection<UserGroup>();
+            UserEvents = new Collection<UserEvent>();
+            Messages = new Collection<Message>();
         }
         
         [Key]
@@ -46,16 +48,41 @@ namespace turbo_funicular.Models {
             }
         }
 
-        public bool isInGroup(int groupId)
+        public bool isInGroup(ApplicationDbContext dbContext, int groupId)
         {
-            var obj = UserGroups.FirstOrDefault(e => (e.UserId == Id && e.GroupId == groupId));
+            var obj = dbContext.UserGroups.FirstOrDefault(e => (e.UserId == Id && e.GroupId == groupId));
             return obj != null;
         }
 
-        public bool isInEvent(int eventId)
+        public bool isInEvent(ApplicationDbContext dbContext, int eventId)
         {
-            var obj = UserEvents.FirstOrDefault(e => (e.UserId == Id && e.EventId == eventId));
+            var obj = dbContext.UserEvents.FirstOrDefault(e => (e.UserId == Id && e.EventId == eventId));
             return obj != null;
+        }
+
+        public List<Group> GetOwnedGroups(ApplicationDbContext dbContext)
+        {
+            return dbContext.Groups.Where(e => e.UserId == Id).ToList();
+        }
+
+        public List<Event> GetOwnedEvents(ApplicationDbContext dbContext)
+        {
+            return dbContext.Events.Where(e => e.UserId == Id).ToList();
+        }
+
+        public List<Message> GetMesseges(ApplicationDbContext dbContext)
+        {
+            return dbContext.Messages.Where(e => e.UserId == Id).ToList();
+        }
+
+        public List<UserGroup> GetUserGroups(ApplicationDbContext dbContext)
+        {
+            return dbContext.UserGroups.Where(e => e.UserId == Id).ToList();
+        }
+
+        public List<UserEvent> GetUserEvents(ApplicationDbContext dbContext)
+        {
+            return dbContext.UserEvents.Where(e => e.UserId == Id).ToList();
         }
     }
 }

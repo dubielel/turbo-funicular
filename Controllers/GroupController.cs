@@ -101,7 +101,6 @@ namespace turbo_funicular.Controllers
                     UpdateTime = createTime
                 };
 
-            user.OwnedGroups.Add(newGroup);
             _dbContext.Groups.Add(newGroup);
             await _dbContext.SaveChangesAsync();
             return RedirectToAction("Join", "UserGroup", new {groupId = newGroup.Id});
@@ -242,19 +241,15 @@ namespace turbo_funicular.Controllers
 
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
 
-            foreach (var userGroup in @group.UserGroups)
+            foreach (var userGroup in @group.GetUserGroups(_dbContext))
             {
-                userGroup.User.UserGroups.Remove(userGroup);
-                @group.UserGroups.Remove(userGroup);
                 if (@group != null)
                 {
                     _dbContext.UserGroups.Remove(userGroup);
                 }
-                
                 await _dbContext.SaveChangesAsync();
             }
 
-            user.OwnedGroups.Remove(@group);
             if (@group != null)
             {
                 _dbContext.Groups.Remove(@group);

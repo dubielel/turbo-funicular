@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using turbo_funicular.Data;
 
 namespace turbo_funicular.Models {
     public class Event {
@@ -8,7 +9,7 @@ namespace turbo_funicular.Models {
         {
             UserEvents = new Collection<UserEvent>();
         }
-
+        
         [Key]
         public int Id { get; set; }
         [ForeignKeyAttribute("User")]
@@ -21,5 +22,10 @@ namespace turbo_funicular.Models {
         public int MaxParticipants { get; set; }
 
         public virtual ICollection<UserEvent> UserEvents { get; set; }
+
+        public List<UserEvent> GetUserEvents(ApplicationDbContext dbContext)
+        {
+            return dbContext.UserEvents.Where(e => e.EventId == Id).ToList();
+        }
     }
 }

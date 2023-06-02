@@ -80,7 +80,7 @@ namespace turbo_funicular.Controllers
             var @group = await _dbContext.Groups.FirstOrDefaultAsync(m => m.Id == message.GroupId);
             var user = await _dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
 
-            if (!user.isInGroup((int)message.GroupId))
+            if (!user.isInGroup(_dbContext, (int)message.GroupId))
             {
                 return RedirectToAction("PermissionDenied", "Home");
             }
@@ -95,8 +95,6 @@ namespace turbo_funicular.Controllers
                 Content = message.Content
             };
 
-            user.Messages.Add(newMessage);
-            @group.Messages.Add(newMessage);
             _dbContext.Messages.Add(newMessage);
             await _dbContext.SaveChangesAsync();
             return RedirectToRoute("GroupDetails", new { id = @group.Id });

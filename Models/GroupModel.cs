@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using turbo_funicular.Data;
 
 namespace turbo_funicular.Models {
     public class Group {
@@ -25,5 +26,15 @@ namespace turbo_funicular.Models {
 
         public virtual ICollection<UserGroup> UserGroups { get; set; }
         public virtual ICollection<Message> Messages { get; set; }
+
+        public List<Message> GetMesseges(ApplicationDbContext dbContext)
+        {
+            return dbContext.Messages.Where(e => e.GroupId == Id).ToList();
+        }
+
+        public List<UserGroup> GetUserGroups(ApplicationDbContext dbContext)
+        {
+            return dbContext.UserGroups.Where(e => e.GroupId == Id).ToList();
+        }
     }
 }

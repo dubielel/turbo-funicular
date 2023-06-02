@@ -101,7 +101,6 @@ namespace turbo_funicular.Controllers
                     MaxParticipants = @event.MaxParticipants
             };
 
-            user.OwnedEvents.Add(newEvent);
             _dbContext.Events.Add(newEvent);
 
             await _dbContext.SaveChangesAsync();
@@ -261,8 +260,6 @@ namespace turbo_funicular.Controllers
                 
                 await _dbContext.SaveChangesAsync();
             }
-
-            user.OwnedEvents.Remove(@event);
 
             if (@event != null)
             {

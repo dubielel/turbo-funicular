@@ -96,12 +96,7 @@ namespace turbo_funicular.Controllers
             {
                 Username = user.Username,
                 PasswordHash = "",
-                CreateDate = createDate,
-                OwnedEvents = new Collection<Event>(),
-                OwnedGroups = new Collection<Group>(),
-                Messages = new Collection<Message>(),
-                UserEvents = new Collection<UserEvent>(),
-                UserGroups = new Collection<UserGroup>()     
+                CreateDate = createDate,  
             };
             newUser.SetPassword(user.Password);
 
